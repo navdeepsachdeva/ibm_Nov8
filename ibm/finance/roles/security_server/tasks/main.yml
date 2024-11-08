@@ -1,0 +1,24 @@
+---
+# tasks file for security_server
+
+
+- name: Install {{ security_server_package }} Package
+  ansible.builtin.dnf:
+    name: "{{ security_server_package }}"
+    state: present
+  notify:
+    - Security Package Installed
+    - Restart the security service
+
+- name: Open Firewalld {{ security_server_port }} Port
+  ansible.posix.firewalld:
+    service: "{{ security_server_port }}"
+    permanent: true
+    state: enabled
+    immediate: true
+  notify:
+    - Security Port Opened
+    - Restart the security service
+
+- name: Run All Notfied Handlers NOW
+  ansible.builtin.meta: flush_handlers

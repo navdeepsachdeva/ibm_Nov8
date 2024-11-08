@@ -1,0 +1,30 @@
+## INI Format '=' ##
+all:
+  hosts:
+    git.lab.example.com: {}
+  vars:
+    info_role_floor_level: "Level3_inventory_file"
+dev:
+  hosts:
+    servera.lab.example.com: {}
+    serverb.lab.example.com:
+      info_role_floor_level: "Level8_inventory_file_SB"
+
+test:
+  hosts:
+    Brussels_DB:
+      ansible_host: serverc.lab.example.com
+    London_web:
+      var1: value2
+      ansible_host: serverd.lab.example.com
+  vars:
+    var1: value1
+
+prod:
+  hosts:
+    servere.lab.example.com: {}
+    serverf.lab.example.com: {}
+
+control:
+  hosts:
+    workstation.lab.example.com: {}

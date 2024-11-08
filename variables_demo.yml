@@ -1,0 +1,62 @@
+- name: Variable Levels Demo
+  # hosts: servera*
+  # hosts: dev
+  hosts: dev,test
+  gather_facts: false
+  vars:
+    info_role_floor_level: "Level12_play_vars"
+
+  ## Development Level
+  vars_prompt:
+    - name: info_role_floor_level
+      prompt: "Please Enter Floor Level ?"
+      private: false
+  vars_files:
+    - ./vars/outside_vars.yml
+  roles:
+    - role: info_role
+
+  tasks:
+    - name: Print a Variable
+      ansible.builtin.debug:
+        msg: "{{ MYSQL_USER }}"
+    - name: Setup a Fact Value
+      ansible.builtin.set_fact:
+        info_role_floor_level: "Level19_set_fact_vars"
+
+    - name: Include a Variable FIle based on Condition
+      ansible.builtin.include_vars:
+        file: vars/external_vars.yml
+      when: meme is not defined
+
+    - name: Outside Block Custom Task 1
+      ansible.builtin.debug:
+        msg: "Current Level = {{ info_role_floor_level }}"
+
+    - name: Block of Tasks
+      block:
+        - name: Inside Block Custom Task 2
+          ansible.builtin.debug:
+            msg: "Current Level = {{ info_role_floor_level }}"
+          vars:
+            info_role_floor_level: "Level17 Task_Vars"
+
+        - name: Inside Block Custom Task 3
+          ansible.builtin.debug:
+            msg: "Current Level = {{ info_role_floor_level }}"
+      when: meme is not defined
+      vars:
+        info_role_floor_level: "Level16 Block_Vars"
+
+    - name: Outside Block Custom Task 4
+      ansible.builtin.debug:
+        msg: "Current Level = {{ info_role_floor_level }}"
+
+    - name: Print Special Variables
+      ansible.builtin.debug:
+        msg: >
+              Connection    = {{ ansible_connection }}
+              Hostname      = {{ ansible_host }}
+              Ansible User  = {{ ansible_user }}
+
+#  ansible-navigator run variables_demo.yml  -e 'info_role_floor_level="Level22_COmmand_GOD_LEVEL"'

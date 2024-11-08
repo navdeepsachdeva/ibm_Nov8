@@ -1,0 +1,76 @@
+- name: Order Execution of Roles/Tasks
+  hosts: servera*
+  gather_facts: true
+
+  roles:
+    - role: web_server
+      web_server_page_content: "Play Content"
+      # become: true
+      vars:
+        ansible_become: true
+
+  pre_tasks:
+    - name: Update Customer About Process Start
+      ansible.builtin.command: sleep 2
+      notify:
+        - services_down_pre_task
+      
+
+    - name: Print Device Information
+      ansible.builtin.debug:
+        msg: >
+              {{ ansible_architecture }}
+              {{ ansible_default_ipv4.address }}
+              {{ ansible_distribution }}
+              {{ ansible_kernel }}
+              {{ ansible_memory_mb.real.free }}
+              {{ ansible_python_version }}
+
+    - name: Check if Web Server can be Installed
+      ansible.builtin.assert:
+        that:
+          - ansible_architecture == "x86_64"
+          - ansible_memory_mb.real.free >= 150
+        fail_msg: "Not Enough Resources"
+        success_msg: "Hurray Ready to go ahead"
+
+  post_tasks:
+    - name: Test Web Page Access
+      ansible.builtin.uri:
+        url: http://servera:80
+        return_content: yes
+      register: captured
+         
+    - name: Print Output
+      ansible.builtin.debug:
+        msg: "{{ captured.content }} // {{ captured.status }}"
+
+    - name: Send email to Customer
+      ansible.builtin.command: sleep 2
+      notify:
+        - services_up_post_task
+      
+  tasks:
+    # - name: Include Info Role
+    #   ansible.builtin.include_role:
+    #     name: info_role
+    #   when: ansible_memory_mb.real.total >= 800
+
+    - name: Play Extra Task
+      ansible.builtin.command: sleep 2
+      notify:
+        - play_extra_handler
+
+
+  handlers:
+    - name: play_extra_handler
+      ansible.builtin.debug:  
+        msg: "Extra Handler"
+
+    - name: services_down_pre_task
+      ansible.builtin.debug:  
+        msg: "Instagram Down SLeep NOW"
+
+    - name: services_up_post_task
+      ansible.builtin.debug:
+        msg: "Instagram UP Start Wasting Time"

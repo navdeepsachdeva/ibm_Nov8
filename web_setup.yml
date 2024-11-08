@@ -1,0 +1,35 @@
+- name: Setup a Web Server
+  hosts: servera*
+  gather_facts: false
+  roles:
+    - role: web_server
+      web_server_page_content: "By Kuruvilla Playbook"
+
+  tasks:
+    - name: Create Cronjob
+      ansible.builtin.cron:
+        name: "append date"
+        hour: "*"
+        minute: "1"
+        job: "date >> /home/devops/mydate"
+
+    - name: Open Web Port
+      ansible.posix.firewalld:
+        service: http
+        permanent: yes
+        state: enabled
+        immediate: yes
+      
+- name: Verify Web Server   
+  hosts: workstation*            
+  gather_facts: false
+  tasks:
+    - name: Test Web Page Access
+      ansible.builtin.uri:
+        url: http://servera:80
+        return_content: yes
+      register: captured
+
+    - name: Print Output
+      ansible.builtin.debug:
+        msg: "{{ captured.content }} // {{ captured.status }}"

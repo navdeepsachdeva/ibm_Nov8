@@ -1,0 +1,52 @@
+- name: Become Playbook
+  hosts: servera.lab.example.com
+  gather_facts: false
+  become: false
+  roles:
+    - role: info_role
+      become: false
+    - role: web_server 
+      ansible_become: true
+      # become: true
+  
+  tasks:
+    - name: Include a Variable File
+      ansible.builtin.include_vars:
+        file: vars/external_vars.yml
+
+    - name: Create Cronjob
+      ansible.builtin.cron:
+        name: "append date"
+        hour: "*"
+        minute: "1"
+        job: "date >> /home/devops/mydate"
+
+    - name: Block for Web Server Tasks
+      block:
+        - name: Install Web Package
+          ansible.builtin.dnf:
+            name: "{{ web_server_package }}"
+            state: present
+        
+        - name: Deploy Application
+          ansible.builtin.copy:
+            content: "{{ web_server_page_content }}--{{ info_role_floor_level }}"
+            dest: "{{ web_server_path }}"
+        
+        - name: Start the service
+          ansible.builtin.service:
+            name: "{{ web_server_service }}"
+            state: "{{ web_server_state }}"
+      #become: true
+      when: meme is not defined
+      vars:
+        info_role_floor_level: "Level16 Block_Vars"
+        ansible_become: true
+
+    - name: Open Firewalld Port
+      ansible.posix.firewalld:
+        service: http
+        permanent: true
+        state: enabled
+        immediate: true
+      become: true

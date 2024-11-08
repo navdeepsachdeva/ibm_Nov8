@@ -1,0 +1,25 @@
+namespace: ibm
+name: finance
+version: 1.0.0
+readme: README.md
+authors:
+- David P <david@ibm.com>
+
+description: Custom Finance Collection
+
+license:
+- GPL-2.0-or-later
+
+license_file: ''
+tags: []
+
+dependencies:
+  community.general: '>=1.0.0'
+  cisco.catalystwan: '>=0.3.0'
+repository: http://example.com/repository
+documentation: http://docs.example.com
+homepage: http://example.com
+issues: http://example.com/issue/tracker
+
+build_ignore: []
+

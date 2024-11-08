@@ -1,0 +1,6 @@
+info_role_floor_level: "Level18_Include_vars_file"
+web_server_page_content: "Defaults Folder Index Page"
+web_server_package: httpd
+web_server_path: /var/www/html/index.html
+web_server_service: httpd
+web_server_state: started

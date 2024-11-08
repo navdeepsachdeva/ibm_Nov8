@@ -1,0 +1,42 @@
+---
+# handlers file for web_server
+
+- name: Package Installed
+  ansible.builtin.debug:
+    msg: "Web Package Installed"
+
+- name: Restart the web service
+  ansible.builtin.service:
+    name: "{{ web_server_service }}"
+    state: "{{ web_server_state }}"
+  vars:
+    web_server_state: restarted
+
+- name: App Deployed
+  ansible.builtin.debug:
+    msg: "Web Applicated Deployed"
+
+- name: Page 1 Deployed
+  ansible.builtin.debug:
+    msg: "Web Page 1 Deployed"
+  listen: App Deployed
+
+- name: Page 2 Deployed
+  ansible.builtin.debug:
+    msg: "Web Page 2 Deployed"
+  listen: App Deployed
+
+- name: Page 3 Deployed
+  ansible.builtin.debug:
+    msg: "Web Page 3 Deployed"
+  listen: App Deployed
+
+- name: Page 4 Deployed
+  ansible.builtin.debug:
+    msg: "Web Page 4 Deployed"
+  listen: App Deployed
+
+- name: Page 5 Deployed
+  ansible.builtin.debug:
+    msg: "Web Page 5 Deployed"
+  listen: App Deployed

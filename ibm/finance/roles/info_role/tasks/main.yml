@@ -1,0 +1,19 @@
+---
+# tasks file for info_role
+
+- name: Start Collecting Information
+  ansible.builtin.command: sleep 2
+  notify:
+    - Start Info Role
+
+- name: Print Value in ROle
+  ansible.builtin.debug:
+    msg: "Current Level = {{ info_role_floor_level }}"
+
+- name: Content into File
+  ansible.builtin.copy:
+    content: "Current Level = {{ info_role_floor_level }}"
+    dest: /tmp/check
+  notify:
+    - File Changed
+

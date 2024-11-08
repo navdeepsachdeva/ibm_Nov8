@@ -1,0 +1,100 @@
+- name: Lookup Query Demo
+  hosts: servera*
+  gather_facts: true
+  vars_files:
+    - vars/outside_vars.yml
+    - vars/users.yml
+  tasks:
+    - name: Print Simple List
+      ansible.builtin.debug:
+        msg: "{{ item }}"
+      loop: "{{ lookup('ansible.builtin.list', simple_list) }}"
+
+      # with_items: "{{ simple_list }}"
+      # loop: "{{ simple_list }}"
+
+    - name: Print Complex List
+      ansible.builtin.debug:
+        msg: "{{ item.fn }} -- {{ item.ln }}"
+      loop: "{{ lookup('ansible.builtin.list', complex_list) }}"
+      # with_list: "{{ complex_list }}"
+      # loop: "{{ complex_list }}"
+
+    - name: Print Dict
+      ansible.builtin.debug:
+        msg: "{{ item.key }} ++ {{ item.value }}"
+      loop: "{{ lookup('ansible.builtin.dict', mydict) }}"
+      # with_dict: "{{ mydict }}"
+      # loop: "{{ mydict | dict2items }}"
+
+    - name: Print Sequence as Array
+      ansible.builtin.debug:
+        msg: "{{ query('ansible.builtin.sequence', 'start=0 end=5 format=eth%x') }}"
+        # msg: "{{ lookup('ansible.builtin.sequence', 'start=0 end=5 format=eth%x') }}"
+        # lookup provides comma separated values but we want list so use query Plugin
+
+    - name: Print Sequence as Loop
+      ansible.builtin.debug:
+        msg: "{{ item }}"
+      loop: "{{ query('ansible.builtin.sequence', 'start=0 end=5 format=eth%x') }}"
+        # msg: "eth{{ item }}"
+      # with_sequence: start=0 end=5 format=eth%x
+      
+    - name: Print File
+      ansible.builtin.debug:
+        msg: "{{ item }}"
+      loop: "{{ query('ansible.builtin.file', 'vars/external_varss.yml',errors='warn') }}"
+      # with_file:
+      #  - vars/external_vars.yml
+      #  - vars/outside_vars.yml
+
+    - name: Print File Line by Line
+      ansible.builtin.debug:
+        msg: "{{ item }}"
+      loop: "{{ query('ansible.builtin.lines','cat vars/external_vars.yml') }}"
+      # with_lines:
+      #   - cat vars/external_vars.yml
+
+
+    - name: List Files in Folder FileGlob 
+      ansible.builtin.debug:
+        msg: "{{ item }}"
+      loop: "{{ query('ansible.builtin.fileglob','vars/*') }}"
+      # with_fileglob:
+      #   - 'vars/*'
+
+    - name: Print Environment Variables 
+      ansible.builtin.debug:
+        msg: "{{ item }}"
+      loop: "{{ query('ansible.builtin.env','PS1','HOME','PATH') }}"
+      # with_env:
+      #   - PS1
+      #   - HOME
+      #   - PATH
+
+    - name: Print Template Before Overwrite
+      ansible.builtin.debug:
+        msg: "{{ lookup('ansible.builtin.template', 'j2/simple.j2') }}"
+
+    - name: Collect Info BY Template
+      ansible.builtin.template:
+        src: j2/simple.j2
+        dest: /tmp/info
+
+    - name: Print Users List
+      ansible.builtin.debug:
+        msg: "{{ item[1] }} -- {{ item[0].name }}"
+      loop: "{{ lookup('ansible.builtin.subelements', users, 'mysql.hosts') }}"
+      # with_subelements:
+      #   - "{{ users }}"
+      #   - mysql.hosts
+        # - authorized
+      
+    - name: Create Users
+      ansible.builtin.user:
+        name: "{{ item.key | lower }}"
+        comment: "{{ item.key | upper}} {{ item.value | upper }}"
+        password: "{{  lookup('ansible.builtin.password', './users_pass/{{ item.key }}.txt chars=ascii_letters,digits,ascii_uppercase length=10 encrypt=sha512_crypt') }}"
+      loop: "{{ lookup('ansible.builtin.dict', mydict) }}"
+      become: true
+

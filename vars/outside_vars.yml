@@ -1,0 +1,20 @@
+
+info_role_floor_level: "Level14_vars_files"
+
+simple_list:
+  - kuruvilla
+  - david
+  - nav
+
+complex_list:
+  - fn: kuruvilla
+    ln: k
+  - fn: david
+    ln: P
+  - fn: nav
+    ln: s
+
+mydict:
+  kuruvilla: K
+  david: P
+  nav: S

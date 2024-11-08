@@ -1,0 +1,9 @@
+- name: NON Idemopotent Modules
+  hosts: servera*
+  gather_facts: false
+  tasks:
+    - name: Print lines from file Command 
+      ansible.builtin.command: tail -n 2 /etc/passwd
+      
+    - name: Print lines from file SHELL
+      ansible.builtin.shell: tail -n 2 /etc/passwd

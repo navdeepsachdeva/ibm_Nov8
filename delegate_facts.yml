@@ -1,0 +1,21 @@
+- name: Handlers Demo/ Dependency Task Playbook
+  hosts: servera.lab.example.com
+  gather_facts: true
+  become: true
+  tasks:
+ 
+    - name: Create file in /tmp folder
+      ansible.builtin.copy:
+        content: "Ad-Hoc to Play Module $(date +%D-%H-%S)"
+        dest: /tmp/f1
+
+    - name: Create User on Serverb
+      ansible.builtin.user:
+        name: "{{  ansible_facts.ansible_local.ibm_belgium.user_info.emp_name }}"
+        uid:  "{{  ansible_facts.ansible_local.ibm_belgium.user_info.emp_id }}"
+        comment: Working as "{{ ansible_facts.ansible_local.ibm_belgium.dept_info.role | upper }}" at "{{ ansible_facts.ansible_local.ibm_belgium.dept_info.location | upper }}"
+        password: "{{ 'redhat' | password_hash('sha512') }}" 
+      delegate_to: serverb.lab.example.com
+      delegate_facts: true
+      become: true
+

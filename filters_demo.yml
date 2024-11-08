@@ -1,0 +1,29 @@
+- name: Filters Demo
+  hosts: servera*
+  gather_facts: false
+  tasks:
+    - name: String Filters
+      ansible.builtin.debug:
+        msg: >
+            Ansible applies
+            variable values to playbooks and
+            {{ 'templates' | capitalize | length }} by using
+            {{ youme | default('Not Available') | upper }}
+            Jinja2 expressions.
+            {{ somevar | upper }}
+            {{ yourarray | flatten | unique | sort}}
+            {{ myarray | unique | sort }}
+      vars:
+        somevar: "hello"
+        myarray: [5,9,3,0,1,8,1,5,3,2]
+        yourarray: [5,[9,[3,[0,1],8]],1,5,3,2]
+
+
+    - name: Print Array one by one
+      ansible.builtin.debug:
+        msg: "eth{{ item }}"
+      loop: "{{ myarray | flatten | unique | sort | reverse }}"
+      when: item == 8
+      vars:
+        myarray: [5,[9,[3,[0,1],8]],1,5,3,2]
+        #myarray: [5,9,3,0,1,8,1,5,3,2]

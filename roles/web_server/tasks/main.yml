@@ -1,0 +1,23 @@
+---
+# tasks file for web_server
+
+- name: Install Web Package
+  ansible.builtin.dnf:
+    name: "{{ web_server_package }}"
+    state: present
+  notify:
+    - Restart the web service
+    - Package Installed
+
+- name: Deploy Application
+  ansible.builtin.copy:
+    content: "{{ web_server_page_content }}"
+    dest: "{{ web_server_path }}"
+  notify:
+    - Restart the web service
+    - App Deployed
+    # - Page 1 Deployed
+    # - Page 2 Deployed
+    # - Page 3 Deployed
+    # - Page 4 Deployed
+    # - Page 5 Deployed

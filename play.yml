@@ -1,0 +1,17 @@
+- name: Convert Ad-hoc Command to  Playbook
+  hosts: servera.lab.example.com
+  gather_facts: false
+  tasks:
+    - name: Create Cronjob
+      ansible.builtin.cron:
+        name: "append date"
+        hour: "*"
+        minute: "1"
+        job: "date >> /home/devops/mydate"
+
+    - name: Open Firewalld Port
+      ansible.posix.firewalld:
+        service: mysql
+        permanent: true
+        state: enabled
+        immediate: true

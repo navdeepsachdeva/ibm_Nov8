@@ -1,0 +1,10 @@
+---
+# handlers file for info_role
+
+- name: Start Info Role 
+  ansible.builtin.debug:
+    msg: "Starting the ball rolling"
+
+- name: File Changed
+  ansible.builtin.debug:
+    msg: "Current Level = {{ info_role_floor_level }} at $(date +%S)"

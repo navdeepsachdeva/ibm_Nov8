@@ -1,0 +1,60 @@
+- name: Optimization Demo Play 1
+  hosts: servera*
+  gather_facts: false
+# Use setup module as task to collect info
+  tasks:
+    - name: Colelct Custom Facts
+      ansible.builtin.setup:
+        gather_subset:
+          - '!all'
+          - 'min'
+          - 'hardware'
+          - 'network'
+    - name: Print Device Information
+      ansible.builtin.debug:
+        msg: >
+              {{ ansible_architecture }}
+              {{ ansible_default_ipv4.address }}
+              {{ ansible_distribution }}
+
+    - name: Play Extra Task
+      ansible.builtin.command: sleep 1
+
+- name: Optimization Demo Play 2
+  hosts: servera*
+  gather_facts: false
+
+  tasks:
+    - name: Print Device Information
+      ansible.builtin.debug:
+        msg: >
+              {{ ansible_kernel }}
+              {{ ansible_memory_mb.real.free }}
+              {{ ansible_python_version }}
+
+    - name: Play Extra Task
+      ansible.builtin.command: sleep 1
+
+    - name: Collect Info BY Templte
+      ansible.builtin.template:
+        src: j2/simple.j2
+        dest: /tmp/info
+
+- name: Optimization Demo Play 3
+  hosts: servera*
+  gather_facts: false
+  become: true
+  tasks:
+    - name: Install Multiple Packages
+      ansible.builtin.yum:
+        name:
+          - httpd
+          - vsftpd
+
+    - name: Start Multiple Services
+      ansible.builtin.service:
+        name: "{{ item }}"
+        state: started
+      loop:
+          - httpd
+          - vsftpd

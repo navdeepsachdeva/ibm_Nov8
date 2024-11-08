@@ -1,0 +1,9 @@
+collections:
+  - name: /build/ibm-finance-1.0.0.tar.gz
+    type: file
+
+  - name: /build/ansible-posix-1.4.0.tar.tar
+    type: file
+
+  - name: community.aws
+    version: 8.0.0

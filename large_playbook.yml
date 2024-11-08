@@ -1,0 +1,9 @@
+- name: Variable Playbook
+  ansible.builtin.import_playbook: variables_demo.yml
+
+# - name: Set the GIT
+#   ansible.builtin.import_playbook: setup_git.yml
+
+
+- name: COnvery ADHOC to PLAY
+  ansible.builtin.import_playbook: convert.yml

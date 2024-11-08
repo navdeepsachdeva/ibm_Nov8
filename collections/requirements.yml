@@ -1,0 +1,13 @@
+collections:
+  - name: redhat.openshift
+    version: 2.1.0
+
+    name: redhat.satellite
+
+  - name: cisco.catalystwan
+  
+  - name: community.mysql
+
+  - name: /home/student/Downloads/community-general-9.5.1.tar.gz
+
+#  - name: vmware.vmware

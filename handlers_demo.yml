@@ -1,0 +1,54 @@
+- name: Handlers Demo/ Dependency Task Playbook
+  hosts: servera.lab.example.com
+  gather_facts: false
+  become: true
+  vars_files:
+    - vars/external_vars.yml
+  tasks:
+ 
+    - name: Create file in /tmp folder
+      ansible.builtin.copy:
+        content: "Ad-Hoc to Play Module $(date +%D-%H)"
+        dest: /tmp/f1
+      notify:
+        - Cron Job Created
+
+    - name: Install Web Package
+      ansible.builtin.dnf:
+        name: "{{ web_server_package }}"
+        state: present
+      notify:
+        - Restart the service
+        - Package Installed
+    
+    - name: Deploy Application
+      ansible.builtin.copy:
+        content: "{{ web_server_page_content }}"
+        dest: "{{ web_server_path }}"
+      notify:
+        - Restart the service
+        - App Deployed
+
+  handlers: 
+    - name: Extra Handlers
+      ansible.builtin.debug:
+        msg: "Extra Stuff"
+
+    - name: Restart the service
+      ansible.builtin.service:
+        name: "{{ web_server_service }}"
+        state: "{{ web_server_state }}"
+      vars:
+        web_server_state: restarted
+
+    - name: Package Installed
+      ansible.builtin.debug:
+        msg: "Web Package Installed"
+
+    - name: App Deployed
+      ansible.builtin.debug:
+        msg: "Web Applicated Deployed"
+
+    - name: Cron Job Created
+      ansible.builtin.debug:
+        msg: "Cron Job mail send to customers"

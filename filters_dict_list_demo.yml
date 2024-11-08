@@ -1,0 +1,28 @@
+- name: Filters Demo
+  hosts: servera*
+  gather_facts: false
+  vars_files:
+    - vars/outside_vars.yml
+  tasks:
+    - name: Print Simple List
+      ansible.builtin.debug:
+        msg: "{{ item }}"
+      loop: "{{ simple_list }}"
+
+    - name: Print Complex List
+      ansible.builtin.debug:
+        msg: "{{ item.fn }} -- {{ item.ln }}"
+      loop: "{{ complex_list }}"
+
+    - name: Print Dict
+      ansible.builtin.debug:
+        msg: "{{ item.key }} ++ {{ item.value }}"
+      loop: "{{ mydict | dict2items }}"
+
+    - name: Create Users
+      ansible.builtin.user:
+        name: "{{ item.key | lower }}" 
+        comment: "{{ item.key | upper}} {{ item.value | upper }}"
+        password: "{{ 'redhat' | password_hash('sha512') }}"
+      loop: "{{ mydict | dict2items }}"
+      become: true
